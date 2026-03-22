@@ -1,90 +1,80 @@
-# Obsidian Sample Plugin
+# Fairy
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An Obsidian plugin that automatically fills in placeholders in your notes using Gemini AI with Google Search grounding and your local vault as context.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## How it works
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+Write a placeholder anywhere in your note using natural language:
 
-## First time developing plugins?
-
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+```
+(insert alex hormozi's value equation here)
+(add a summary of stoicism here)
+(insert a short story about naruto here)
 ```
 
-If you have multiple URLs, you can also do:
+Fairy detects the placeholder, searches the web and your local vault, then shows an inline suggestion you can accept or reject — without leaving the editor.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+## Features
+
+- **Inline suggestions** — generated content appears right after the placeholder as ghost text
+- **Approve or reject** — click ✓/✗ or press `Tab` / `Esc`
+- **Source badges** — see where the content came from:
+  - `📓 vault` — drawn from your personal notes via [qmd](https://github.com/tobi/qmd)
+  - `🌐 web` — grounded in live web search via Gemini
+  - `🧠 model` — generated from model knowledge only
+- **Smart dedup** — rejected suggestions won't retrigger unless you edit the placeholder text
+- **On/off toggle** — click the wand icon in the ribbon or use the command palette
+- **Status bar** — live feedback (`waiting…`, `searching…`, `1 suggestion ready`, etc.)
+
+## Requirements
+
+- A [Google AI Studio](https://aistudio.google.com/) API key (free tier works)
+- [qmd](https://github.com/tobi/qmd) CLI installed and a vault collection indexed (for local context)
+
+## Setup
+
+1. Install the plugin and enable it
+2. Go to **Settings → Fairy → API Key** and paste your Gemini API key
+3. Click **Test** to verify the connection
+4. (Optional) Index your vault with qmd: `qmd collection add vault "**/*.md"` then `qmd update`
+
+## Usage
+
+### Auto mode (default)
+Just write a placeholder and stop typing. After ~1.2 seconds Fairy searches and shows the suggestion inline.
+
+### Manual mode
+Open the command palette and run **Fairy: Fill all placeholders in current note**.
+
+### Toggle on/off
+Click the **wand icon** in the left ribbon, or run **Fairy: Toggle on/off** from the command palette.
+
+### Accepting / rejecting
+| Action | Keyboard | Mouse |
+|--------|----------|-------|
+| Accept | `Tab` | Click ✓ |
+| Reject | `Esc` | Click ✗ |
+
+Rejecting a suggestion permanently ignores that placeholder until you change its text.
+
+## Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| API Key | — | Google AI Studio API key |
+| Model | `gemini-2.0-flash` | Gemini model to use |
+| Trigger mode | Idle | Auto-trigger on idle or command only |
+| Idle delay | 1200ms | How long to wait after typing stops |
+| Max tokens | 800 | Maximum length of generated content |
+| Support bracket syntax | Off | Also detect `[insert ... here]` |
+| Include surrounding context | On | Send nearby text to Gemini for tone matching |
+| Use vault context (qmd) | On | Search local notes and include relevant excerpts |
+
+## Development
+
+```bash
+pnpm install
+pnpm dev        # watch mode
+pnpm build      # production build
+pnpm test       # run tests (39 tests, no live API calls)
 ```
-
-## API Documentation
-
-See https://docs.obsidian.md
