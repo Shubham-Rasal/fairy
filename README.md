@@ -2,6 +2,9 @@
 
 An Obsidian plugin that automatically fills in placeholders in your notes using Gemini AI with Google Search grounding and your local vault as context.
 
+<img width="1512" height="949" alt="image" src="https://github.com/user-attachments/assets/cf9372a1-c61b-453a-a3e3-fd6830317c02" />
+
+
 ## How it works
 
 Write a placeholder anywhere in your note using natural language:
